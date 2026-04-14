@@ -5,9 +5,9 @@ from views.post import PostOut
 from models.post import posts
 from database import database
 
+app = FastAPI()
 
-
-@router.get("/", response_model=list[PostOut])
+@app.get("/", response_model=list[PostOut])
 async def read_posts(
                published: bool, 
                limit: int, 
@@ -18,7 +18,7 @@ async def read_posts(
     return await database.fetch_all(query)
 
 
-@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=PostOut)
+@app.get("/{id}", status_code=status.HTTP_200_OK, response_model=PostOut)
 async def list_posts(id: int):
     query = (
         posts.select()
@@ -26,7 +26,7 @@ async def list_posts(id: int):
     )
     return await database.fetch_one(query)
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=PostOut)
+@app.post("/", status_code=status.HTTP_201_CREATED, response_model=PostOut)
 async def create_post(post: PostIn):
     command = posts.insert().values(title=post.title, content=post.content, published_at=post.published_at, published=post.published)
     
@@ -34,7 +34,7 @@ async def create_post(post: PostIn):
     return {**post.model_dump(), "id": last_id}
 
 
-@router.put("/{post_id}", status_code=status.HTTP_200_OK, response_model=PostOut)
+@app.put("/{post_id}", status_code=status.HTTP_200_OK, response_model=PostOut)
 async def update_post(post_id: int, post: PostIn):
     command_update = (
     posts.update()
@@ -44,7 +44,7 @@ async def update_post(post_id: int, post: PostIn):
     await database.execute(command_update)
     return {**post.model_dump(), "id": post_id}
 
-@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(post_id: int):
     command_delete = (
     posts.delete().where(posts.c.id == post_id)
