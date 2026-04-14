@@ -5,7 +5,6 @@ from views.post import PostOut
 from models.post import posts
 from database import database
 
-router = APIRouter(prefix="/posts", dependencies=[Depends(login_required)])
 
 
 @router.get("/", response_model=list[PostOut])
