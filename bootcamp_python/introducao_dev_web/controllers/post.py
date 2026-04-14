@@ -1,5 +1,5 @@
  
-from fastapi import Response, FastAPI, status, Cookie, Header, APIRouter
+from fastapi import Response, FastAPI, status, Cookie, Header
 from schemas.post import PostIn
 from views.post import PostOut
 from models.post import posts
